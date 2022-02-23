@@ -3,7 +3,7 @@
 
 ## DEFINITION
 
-This piece of software merge tree ones that handle  the flags to migration: paidSubscriber, paidDirect and activeSubscriber.
+This piece of software merges tree ones that handle  the flags to migration: paidSubscriber, paidDirect and activeSubscriber.
 
 ### flow
 ![arch](./docs/images/userPayStatus.png)
