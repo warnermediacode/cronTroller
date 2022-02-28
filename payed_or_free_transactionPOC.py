@@ -39,16 +39,11 @@ def CuponV2_Pagos_to_dataframes(iterator, chunk_size: int):
   if records:
     frames.append(pd.DataFrame(records))
   return pd.concat(frames) if frames else pd.DataFrame()
-  
 pagos= CuponV2_Pagos_to_dataframes(pagosCol.find({'forFree': {"$exists":False}},{'user_id':1,'producto_id':1,'monto':1,'fecha_fin':1,'fecha_pago':1,'pasarela':1,'transaccion_id':1}))
 
 
-
-
 pagos.rename(columns = {'_id':'pago_id'}, inplace = True)
-
 pagos2=pago
-
 pagosConProduct= pagos2.loc[~(pagos2['producto_id'].isnull())]
 defProducto=pd.read_csv(reference_path)
 defProducto2=defProducto.filter(['_id','valorNacional'])
