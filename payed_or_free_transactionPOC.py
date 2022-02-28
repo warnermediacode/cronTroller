@@ -17,14 +17,11 @@ import bson.objectid
 string_product=os.environ.get('string_product','localhost:27017')
 db_product=os.environ.get('prod_env_db','local')
 read_preferences='secondaryPreferred'
-reference_path=os.environ.get('reference_path')
 
-myclient_con= pymongo.MongoClient(string_produccion,readPreference=read_preferences)
-mydb_conn = myclient_con[bd_product]
-
-
-
+myclient_con= pymongo.MongoClient(string_product,readPreference=read_preferences)
+mydb_conn = myclient_con[db_product]
 kitch_off=datetime(2019,1,1,0,0,0)
+InitDay=datetime(2017,1,1,0,0,0)
 hoy=datetime.now()
 
 pagosCol = mydb_conn["pagos"]
@@ -108,7 +105,6 @@ pagosConProduct_C.columns
 pagosConProduct_C2=pagosConProduct_C.filter(['pago_id','forFree'])
 
 both=[pagosSinProduct_C2,pagosConProduct_C2]
-
 
 pagos_exact = pd.concat(both)
 
