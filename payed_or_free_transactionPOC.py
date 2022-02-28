@@ -3,7 +3,7 @@
 
 # ##### This module adds some value to the payment (transaction) to establish whether it is free or paid. If the product payment does not appear in the payment collection then it is assumed to be a coupon assignment.
 
-
+import os
 from pymongo import MongoClient
 import pymongo
 import pandas as pd
