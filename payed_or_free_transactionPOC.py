@@ -95,7 +95,7 @@ cupAsig_Producto= cupAsig2.merge(defProducto2, right_on='_id',left_on='producto_
 
 cupAsig_Producto.rename(columns = {'_id_x':'cuponAsignado_id'}, inplace = True)
 
-auxiliar=cupAsig_Producto.filter(['cuponAsignado_id','valorNacional','forFree])
+auxiliar=cupAsig_Producto.filter(['cuponAsignado_id','valorNacional','forFree'])
 auxiliar['cuponAsignado_id']=auxiliar['cuponAsignado_id'].apply(str)
 pagosSinProduct['transaccion_id']=pagosSinProduct['transaccion_id'].apply(str)
 
