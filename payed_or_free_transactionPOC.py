@@ -16,6 +16,7 @@ import bson.objectid
 
 string_product=os.environ.get('string_product','localhost:27017')
 db_product=os.environ.get('prod_env_db','local')
+reference_path=os.environ.get('reference_path')
 read_preferences='secondaryPreferred'
 
 myclient_con= pymongo.MongoClient(string_product,readPreference=read_preferences)
