@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import os
@@ -16,7 +16,7 @@ from bson.objectid import ObjectId
 import bson.objectid
 
 
-# In[2]:
+# In[ ]:
 
 
 string_product=os.environ.get('string_product','localhost:27017')
@@ -24,7 +24,7 @@ db_product=os.environ.get('prod_env_db','local')
 read_preferences='secondaryPreferred'
 
 
-# In[3]:
+# In[ ]:
 
 
 myclient_con= pymongo.MongoClient(string_product,readPreference=read_preferences)
@@ -34,14 +34,14 @@ InitDay=datetime(2017,1,1,0,0,0)
 hoy=datetime.now()
 
 
-# In[4]:
+# In[ ]:
 
 
 ayer=datetime.now()-timedelta(hours=24)
 ayerPayCriteria=ayer.replace( hour=23,minute=59,second=59)
 
 
-# In[5]:
+# In[ ]:
 
 
 usersCol = mydb_conn["users"]
@@ -65,28 +65,28 @@ usersGot = usersCol_to_dataframes(usersCol.find({},{'_id':1,'_acuerdo':1,'estado
 
 # # ////ACTIVE_SUBSCRIBER ////
 
-# In[8]:
+# In[ ]:
 
 
 usersGot2=usersGot.loc[~(usersGot['_id'].isnull())]
 usersGot2['_id']=usersGot2['_id'].apply(str)
 
 
-# In[9]:
+# In[ ]:
 
 
 fullAccess=usersGot2.loc[(usersGot2['estado_token'].isin(['completado','cancelado']))]
 withoutAccess=usersGot2.loc[~(usersGot2['_id'].isin(fullAccess['_id']))]
 
 
-# In[10]:
+# In[ ]:
 
 
 for index, row in fullAccess.iterrows():
         variablerar2 =usersCol.update_one({"_id":ObjectId(row['_id'])},{ "$set": { "activeSubscriber":True} })
 
 
-# In[11]:
+# In[ ]:
 
 
 for index, row in withoutAccess.iterrows():
@@ -101,7 +101,7 @@ for index, row in withoutAccess.iterrows():
 
 # ### Getting Information from DB
 
-# In[12]:
+# In[ ]:
 
 
 mycol_transAsig = mydb_conn["transbankfinalizaregistros"]
@@ -124,7 +124,7 @@ transbank = transAsigframes(mycol_transAsig.find({},{'_id':1,'createdAt':1,'user
 transbank=transbank.rename(columns={ "createdAt":"START_DATE","_id":"key"})
 
 
-# In[13]:
+# In[ ]:
 
 
 mycol_paypalAsig= mydb_conn["acuerdospaypals"]
@@ -147,7 +147,7 @@ paypal = paypalAsigframes(mycol_paypalAsig.find({},{'_id':1,'createdAt':1,'user_
 paypal=paypal.rename(columns={ "createdAt":"START_DATE","_id":"key"})
 
 
-# In[15]:
+# In[ ]:
 
 
 mycol_cupAsig= mydb_conn["cuponesasignados"]
@@ -169,7 +169,7 @@ cuponesasignados = cupAsigframes(mycol_cupAsig.find({},{'createdAt':1,'user_id_a
 cuponesasignados=cuponesasignados.rename(columns={ "createdAt":"START_DATE","acuerdo_id":"key"})
 
 
-# In[18]:
+# In[ ]:
 
 
 pagosCol = mydb_conn["pagos"]
@@ -193,7 +193,7 @@ pagos_total = CuponV2_Pagos_to_dataframes(pagosCol.find({},{'user_id':1,'product
 
 # transbanks
 
-# In[20]:
+# In[ ]:
 
 
 transbank['key']=transbank['key'].apply(str)
@@ -201,7 +201,7 @@ pagos_total['acuerdo_id']=pagos_total['acuerdo_id'].apply(str)
 pagos_transb=pagos_total.loc[pagos_total['acuerdo_id'].isin(transbank['key'])]
 
 
-# In[22]:
+# In[ ]:
 
 
 ultimoPagoTransbank=pagos_transb.groupby(['user_id']).agg({'fecha_fin': [np.max]}).unstack().reset_index().rename_axis(None, axis=1)
@@ -209,7 +209,7 @@ ultimoPagoTransbank['fecha_fin_pago']=ultimoPagoTransbank[0]
 prelTransbank=ultimoPagoTransbank.drop(['level_0', 'level_1', 0],axis=1)
 
 
-# In[23]:
+# In[ ]:
 
 
 pagoActivo_transbank=prelTransbank.loc[prelTransbank['fecha_fin_pago']>ayerPayCriteria]
@@ -217,14 +217,14 @@ pagoActivo_transbank=prelTransbank.loc[prelTransbank['fecha_fin_pago']>ayerPayCr
 
 # paypals
 
-# In[24]:
+# In[ ]:
 
 
 paypal['key']=paypal['key'].apply(str)
 pagos_paypals=pagos_total.loc[pagos_total['acuerdo_id'].isin(paypal['key'])]
 
 
-# In[27]:
+# In[ ]:
 
 
 ultimoPagoPaypal=pagos_paypals.groupby(['user_id']).agg({'fecha_fin': [np.max]}).unstack().reset_index().rename_axis(None, axis=1)
@@ -232,7 +232,7 @@ ultimoPagoPaypal['fecha_fin_pago']=ultimoPagoPaypal[0]
 prelPaypal=ultimoPagoPaypal.drop(['level_0', 'level_1', 0],axis=1)
 
 
-# In[28]:
+# In[ ]:
 
 
 pagoActivo_paypal=prelPaypal.loc[prelPaypal['fecha_fin_pago']>ayerPayCriteria]
@@ -240,14 +240,14 @@ pagoActivo_paypal=prelPaypal.loc[prelPaypal['fecha_fin_pago']>ayerPayCriteria]
 
 # cupones
 
-# In[29]:
+# In[ ]:
 
 
 cuponesasignados['key']=cuponesasignados['key'].apply(str)
 pagos_cupones=pagos_total.loc[pagos_total['acuerdo_id'].isin(cuponesasignados['key'])]
 
 
-# In[30]:
+# In[ ]:
 
 
 ultimoPagoCupones=pagos_cupones.groupby(['user_id']).agg({'fecha_fin': [np.max]}).unstack().reset_index().rename_axis(None, axis=1)
@@ -255,39 +255,76 @@ ultimoPagoCupones['fecha_fin_pago']=ultimoPagoCupones[0]
 prelCupones=ultimoPagoCupones.drop(['level_0', 'level_1', 0],axis=1)
 
 
-# In[31]:
+# In[ ]:
 
 
 pagoActivo_cupones=prelCupones.loc[prelCupones['fecha_fin_pago']>ayerPayCriteria]
 
 
-# In[32]:
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+pagoActivo_direct = [pagoActivo_transbank, pagoActivo_paypal]
+paidUser=pd.concat(pagoActivo_direct)
+
+
+# In[ ]:
+
+
+paidDirect=usersGot2.loc[(usersGot2['_id'].isin(paidUser['user_id']))]
+NopaidSubscriber=usersGot2.loc[~(usersGot2['_id'].isin(paidUser['user_id']))]
+
+
+# In[ ]:
+
+
+usersCol = mydb_conn["users"]
+for index, row in paidDirect.iterrows():
+    variablerar2 =usersCol.update_many({"_id":ObjectId(row['_id'])},{ "$set":{'paidDirect':True}})
+usersCol = mydb_conn["users"]
+for index, row in NopaidSubscriber.iterrows():
+    variablerar2 =usersCol.update_many({"_id":ObjectId(row['_id'])},{ "$set":{'paidDirect':False}})
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
 
 
 ultimPagoGeneral = [pagoActivo_transbank, pagoActivo_paypal,pagoActivo_cupones]
 LastPaid=pd.concat(ultimPagoGeneral)
 
 
-# In[34]:
+# In[ ]:
 
 
 pagoActivo=LastPaid.loc[LastPaid['fecha_fin_pago']>ayerPayCriteria]
 
 
-# In[56]:
+# In[ ]:
 
 
 pagoActivo['user_id']=pagoActivo['user_id'].apply(str)
 usersGot2['_id']=usersGot2['_id'].apply(str)
 
 
-# In[53]:
+# In[ ]:
 
 
 usersGot2['_id']=usersGot2['_id'].apply(str)
 
 
-# In[54]:
+# In[ ]:
 
 
 paidSubscriber=usersGot2.loc[(usersGot2['_id'].isin(pagoActivo['user_id']))]
@@ -300,14 +337,26 @@ unpaidSubscriber=usersGot2.loc[~(usersGot2['_id'].isin(pagoActivo['user_id']))]
 
 
 
-# In[57]:
+# In[ ]:
 
 
 usersCol = mydb_conn["users"]
 for index, row in paidSubscriber.iterrows():
-    variablerar2 =usersCol.update_one({"_id":ObjectId(row['_id'])},{ "$set":{'paidSubscriber':True}})
+    variablerar2 =usersCol.update_many({"_id":ObjectId(row['_id'])},{ "$set":{'paidSubscriber':True}})
 for index, row in unpaidSubscriber.iterrows():
-    variablerar2 =usersCol.update_one({"_id":ObjectId(row['_id'])},{"$set":{'paidSubscriber':False}})
+    variablerar2 =usersCol.update_many({"_id":ObjectId(row['_id'])},{"$set":{'paidSubscriber':False}})
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:

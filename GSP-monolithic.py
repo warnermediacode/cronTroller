@@ -59,7 +59,6 @@ withoutAccess=usersGot2.loc[~(usersGot2['_id'].isin(fullAccess['_id']))]
 for index, row in fullAccess.iterrows():
         variablerar2 =usersCol.update_one({"_id":ObjectId(row['_id'])},{ "$set": { "activeSubscriber":True} })
 
-
 for index, row in withoutAccess.iterrows():
         variablerar2 =usersCol.update_one({"_id":ObjectId(row['_id'])},{ "$set": { "activeSubscriber":False} })
 # ///////
@@ -171,7 +170,6 @@ def cupAsigframes(iterator, chunk_size: int):
     frames.append(pd.DataFrame(records))
   return pd.concat(frames) if frames else pd.DataFrame()
   cuponesasignados = cupAsigframes(mycol_cupAsig.find({},{'createdAt':1,'user_id_asignado':1,"acuerdo_id":1}), 10000)
-
 cuponesasignados=cuponesasignados.rename(columns={ "createdAt":"START_DATE","acuerdo_id":"key"})
 
 transbank['key']=transbank['key'].apply(str)
