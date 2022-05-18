@@ -27,6 +27,8 @@ read_preferences='secondaryPreferred'
 API_Login=os.environ.get('prod_env_API_Login','local')
 userAuth=os.environ.get('prod_env_user','local')
 pass_userAuth=os.environ.get('prod_env_past_user','local')
+prod_env_API_Login2=os.environ.get('prod_env_API_Login2','local')
+
 
 # ### Obteniendo las categorias de cupones del Redis!!!
 
@@ -51,7 +53,7 @@ token2=token[1]
 token_beared = token2[:0] + 'Bearer '+token2[:]
 
 
-response2 = requests.get(,
+response2 = requests.get(prod_env_API_Login2,
   headers={
     'Content-Type': 'application/json',
     'Authorization': token_beared
