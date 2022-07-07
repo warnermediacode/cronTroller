@@ -20,7 +20,6 @@ string_product=os.environ.get('string_product','localhost:27017')
 db_product=os.environ.get('prod_env_db','local')
 read_preferences='secondaryPreferred'
 
-
 myclient_con= pymongo.MongoClient(string_product,readPreference=read_preferences)
 mydb_conn = myclient_con[db_product]
 kitch_off=datetime(2019,1,1,0,0,0)
